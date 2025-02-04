@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+#
+# User hardlinks instead of softlinks, since we want to be able to
+# move the dotfiles folder around, possibly, as well as being able
+# to delete the dotfiles folder.
+
+import os
+import sys
+
+dir_pwd = os.getcwd()
+dir_top = [d for d in os.listdir() if os.path.isdir(d)]
+
+def compare_inodes(given_dir):
+    for root, dir, files in os.walk(given_dir):
+        rootdir = root.replace(given_dir, os.environ['HOME'], 1)
+        for f in files:
+            if not os.path.exists(f"{rootdir}/{f}"):
+                continue
+            if os.stat(f"{root}/{f}").st_ino != os.stat(f"{rootdir}/{f}").st_ino:
+                print(f"[NOTICE] Different inodes!")
+                print(f"{root}/{f}")
+                print(f"{rootdir}/{f}\n")
+
+def create_hardlink(given_dir):
+    for root, dir, files in os.walk(given_dir):
+        rootdir = root.replace(given_dir, "$HOME", 1)
+        # Does rootdir exist? If not, recommend creating it
+        if not os.path.exists(root.replace(given_dir, os.environ['HOME'], 1)):
+            print(f"mkdir {rootdir}")
+
+        # Hardlink command to run
+        for f in files:
+            print(f"ln {root}/{f} {rootdir}/{f}")
+
+
+########
+# Main #
+########
+
+# TODO: Add -d (--deploy) and -c (--checkinodes) ?
+for arg in sys.argv[1:]:
+    if arg == "etc":
+        print("Copy to etc\n")
+        continue
+    if arg in dir_top:
+        compare_inodes(arg)
+        create_hardlink(arg)
+    else:
+        print(f"Folder {arg} not in {dir_top}")
