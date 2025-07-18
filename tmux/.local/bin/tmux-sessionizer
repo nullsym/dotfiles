@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+switch_to() {
+  if [[ -z $TMUX ]]; then
+    tmux attach-session -t $1
+  else
+    tmux switch-client -t $1
+  fi
+}
+
+hydrate() {
+  session_base="$HOME/.config/tmux-sessionizer"
+  session_dir="${2/$HOME/$session_base}"
+  if [ -f $session_dir/session ]; then
+    tmux send-keys -t $1 "source $session_dir/session" c-M
+  fi
+}
+
+find_dirs() {
+  if [[ -n $TMUX ]]; then
+    current_session=$(tmux display-message -p '#S')
+    tmux list-sessions -F "[TMUX] #{session_name}" 2>/dev/null | grep -vFx "[TMUX] $current_session"
+  else
+    tmux list-sessions -F "[TMUX] #{session_name}" 2>/dev/null
+  fi
+
+  if [[ -r $HOME/.config/tmux-sessionizer/config ]]; then
+    directories=$(cat $HOME/.config/tmux-sessionizer/config)
+    for dir in ${directories[@]}; do
+      find ${dir%:*} -mindepth 1 -maxdepth ${dir##*:} -name '.*' -prune -o -type d -print
+    done
+  fi
+}
+
+if [[ $# -eq 1 ]]; then
+  selected=$1
+  selected_name=$(basename "$selected" | tr . _ | tr 'A-Z' 'a-z')
+else
+  selected=$(find_dirs | fzf)
+  selected_name=$(basename "$selected" | tr . _ | tr 'A-Z' 'a-z')
+  if [[ "$selected" =~ ^\[TMUX\]\ (.+)$ ]]; then
+    selected_name="${BASH_REMATCH[1]}"
+  fi
+fi
+
+if [[ -z $selected ]]; then
+  exit 0
+fi
+
+if ! tmux has-session -t =$selected_name; then
+  tmux new-session -ds $selected_name -c $selected
+  hydrate $selected_name $selected
+fi
+
+switch_to $selected_name

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+if [[ $PWD == $HOME ]]; then
+  selected=$(fd '' $HOME $HOME/.config $HOME/.local/bin | fzf)
+else
+  selected=$(fd . --type d | fzf)
+fi
+
+open_file() {
+  case "$1" in
+  *pdf | *epub)
+    xdg-open "$1" 2>/dev/null &
+    ;;
+  *doc | *docx | *odt | *ods)
+    libreoffice "$1" 2>/dev/null &
+    ;;
+  *ppt | *pptx)
+    echo "Cannot open ppts"
+    ;;
+  *)
+    dir=$(dirname $selected)
+    file=$(basename $selected)
+    cd "$dir" && nvim "$file"
+    ;;
+  esac
+}
+
+cd "$selected" 2>/dev/null || open_file "$selected"

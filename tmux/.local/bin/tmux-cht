@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+langs="golang python bash javascript typescript nodejs html css gdb"
+coreutils="find tr sed awk grep xargs ps kill lsof rename jq git git-worktree git-status git-commit git-rebase docker docker-compose chmod chown make"
+selected=$(echo $langs $coreutils | tr ' ' '\n' | fzf)
+if [[ -z $selected ]]; then
+  exit 0
+fi
+
+read -p "Enter Query: " query
+
+if [[ $langs =~ $selected ]]; then
+  query=$(echo $query | tr ' ' '+')
+  echo "Language: $selected"
+  echo "Query: $query"
+  curl cht.sh/$selected/$query
+else
+  curl -s cht.sh/$selected~$query
+fi

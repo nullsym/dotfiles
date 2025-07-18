@@ -1,0 +1,26 @@
+###
+# Key settings
+###
+# Alt+z to run 'cd -'
+"\ez": 'cd -\n'
+# Use {up,down} arrow keys to search thru bash history
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+# Collides with default keys:
+# Ctrl+f = Move forwards a single character
+# Ctrl+b = Move backwards a single character
+"\C-f": 'tmux-sessionizer\n'
+"\C-b": '. goto\n'
+
+###
+# Settings
+###
+set completion-ignore-case on
+# Colorized completition
+set colored-stats on
+set visible-stats on
+set mark-symlinked-directories on
+set colored-completion-prefix on
+set menu-complete-display-prefix on
+# Do not show ^C after ctrl+c is pressed
+set echo-control-characters off
