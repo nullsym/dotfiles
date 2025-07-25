@@ -16,8 +16,13 @@ export PATH
 ###
 # Prompt
 ###
-export PS1='\[\e[38;5;22m\][\[\e[38;5;35m\]\w\[\e[38;5;22m\]]\[\e[0m\] \[\e[94;1m\]»\[\e[0m\] '
 export PROMPT_DIRTRIM=2
+export PS1='\[\e]0;TERM\a\]\[\e[38;5;22m\][\[\e[38;5;35m\]\w\[\e[38;5;22m\]]\[\e[0m\] \[\e[94;1m\]»\[\e[0m\] '
+
+# Prepend [AI] if inside a container (like Toolbox)
+if [[ $container == "oci" ]]; then
+  export PS1='\[\e[38;5;183m\][AI]\[\e[0m\] '$PS1
+fi
 
 ###
 # Settings
@@ -47,7 +52,7 @@ export PAGER="less --use-color"
 # Aliases
 ###
 alias backup='borgmatic create --verbosity 1 --list --stats'
-alias pysesh='PYTHONSTARTUP=debug.txt python -i'
+alias pydebug='PYTHONSTARTUP=debug.txt python -i'
 
 alias ls='ls -hF --group-directories-first --color=auto'
 alias la='ls -ahF --color=auto'
@@ -58,7 +63,6 @@ alias df='df -h'
 alias free='free -h'
 alias vim='nvim'
 alias v='nvim'
-alias t='tmux'
 alias music='mpv --script=/etc/mpv/scripts/mpris.so --no-video --shuffle --loop-playlist --playlist=<(find "$PWD" -type f)'
 alias videos='mpv --shuffle --loop-playlist --playlist=<(find "$PWD" -type f -iname *mp4 -o -iname *mkv -o -iname *avi -o -iname *mpg -o -iname *flv -o -iname *webm -o -iname *wmv -o -iname *m4v)'
 alias leetcode='nvim leetcode.nvim'
