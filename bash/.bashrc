@@ -63,7 +63,7 @@ alias df='df -h'
 alias free='free -h'
 alias vim='nvim'
 alias v='nvim'
-alias music='mpv --script=/etc/mpv/scripts/mpris.so --no-video --shuffle --loop-playlist --playlist=<(find "$PWD" -type f)'
+alias music='mpv --script=/etc/mpv/scripts/mpris.so --no-video --shuffle --loop-playlist --playlist=<(find "$PWD" -type f ! -name "*.png" ! -name "*.jpg" ! -name "*.log" ! -name "*.cue")'
 alias videos='mpv --shuffle --loop-playlist --playlist=<(find "$PWD" -type f -iname *mp4 -o -iname *mkv -o -iname *avi -o -iname *mpg -o -iname *flv -o -iname *webm -o -iname *wmv -o -iname *m4v)'
 alias leetcode='nvim leetcode.nvim'
 
