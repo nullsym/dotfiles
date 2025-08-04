@@ -1,30 +1,19 @@
 return {
   "folke/snacks.nvim",
-  lazy = false,
-  config = function()
-    local Snacks = require("snacks")
-    -- Have to run setup explicitly because calling config overwrote
-    -- the default setup and thus we ended with no notifier, dashboard, etc.
-    Snacks.setup({
-      indent = { enabled = true },
-      input = { enabled = true },
-      notifier = { enabled = true },
-      scope = { enabled = true },
-      scroll = { enabled = true },
-      statuscolumn = { enabled = true },
-      toggle = { map = LazyVim.safe_keymap_set },
-      words = { enabled = true },
-      dashboard = { enabled = true },
-      -- Move snack explorer to the right
-      picker = {
-        sources = {
-          explorer = {
-            layout = { layout = { position = "right" } },
-          },
+  -- Move snack explorer to the right
+  opts = {
+    picker = {
+      sources = {
+        explorer = {
+          layout = { layout = { position = "right" } },
         },
       },
-    })
-    -- Toggle colored vertical line at column 100
+    },
+  },
+
+  -- Toggle colored vertical line at column 100
+  config = function(_, opts)
+    require("snacks").setup(opts)
     Snacks.toggle({
       name = "Color Column",
       get = function()
